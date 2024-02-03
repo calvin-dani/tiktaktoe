@@ -1,8 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { View, Text, Button, ActivityIndicator, FlatList, StyleSheet } from "react-native";
+import { View, Text, Button, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import TikTakToeJoin from "../Game/TikTakToeJoin";
+import { router } from 'expo-router';
 
 const Board = () => {
     const [data, setData] = useState([]);
@@ -17,7 +19,8 @@ const Board = () => {
             //     console.log(documentSnapshot.id, " => ", documentSnapshot.data());
             // });
             const dataList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setData(dataList);
+            console.log(dataList, "dataList");    
+            setData(dataList);
                 setLoading(false);
         }, error => {
             console.error("Error getting documents: ", error);
@@ -46,19 +49,10 @@ const Board = () => {
                         {/* Render each item as a row in your table */}
                         {/* <Text>{item.id}</Text> */}
                         
-                        <Text style={{ ...styles.items, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }}>ID</Text>
-                        <Text style={{ ...styles.items, borderBottomRightRadius: 10, borderTopRightRadius: 10, borderLeftColor: "white", borderLeftWidth: 2 }}>Join</Text>
-                        <FlatList
-                            data={data}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <View>
-                                    {/* Render each item as a row in your table */}
-                                    <Text>{item.id}</Text>
-                                    {/* Other fields */}
-                                </View>
-                            )}
-                        />
+                        <Text style={{ ...styles.items, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }}>{item.name}</Text>
+                        <TouchableOpacity onPress={()=> router.replace({ pathname: 'home/Game/TikTakToeJoin', params: { id: item.id } })}>
+                        <Text style={{ ...styles.items, borderBottomRightRadius: 10, borderTopRightRadius: 10, borderLeftColor: "white", borderLeftWidth: 2 } }>Join</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             />

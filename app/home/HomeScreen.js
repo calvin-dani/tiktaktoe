@@ -15,9 +15,9 @@ const HomeScreen = () => {
                 <View style={styles.menuItems}>
             <Link style={{color:"white",fontSize:20,fontWeight:900}} href="home/Game/TikTakToe">Tik Tak Toe</Link>
                 </View>
-                <View style={styles.menuItems}>
-            <Link style={{color:"white",fontSize:20,fontWeight:900}} href="home/Game/TikTakToest">Tik Tak Toest</Link>
-                </View>
+                {/* <View style={styles.menuItems}>
+            <Link style={{color:"white",fontSize:20,fontWeight:900}} href="home/Game/TikTakToeJoin">Tik Tak Toest</Link>
+                </View> */}
                 <View style={styles.menuItems}>
             <Link style={{color:"white",fontSize:20,fontWeight:900}} href="home/Lobby/Board">Lobby</Link>
                 </View>

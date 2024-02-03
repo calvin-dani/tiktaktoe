@@ -1,57 +1,50 @@
 import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
-import {onSnapshot, updateDoc} from "firebase/firestore";
+import { useLocalSearchParams, useGlobalSearchParams, Link } from 'expo-router';
 
 
-const TikTakToe = () => {
+const TikTakToeJoin = () => {
     const [board, setBoard] = useState(Array(9).fill(''));
     const [isXNext, setIsXNext] = useState(true);
     const [winner, setWinner] = useState('');
     const [error, setError] = useState(null);
-    const [docId, setDocId] = useState(null);
+    const docId = useLocalSearchParams();
+
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
         print(user, "user");
         const fetchData = async () => {
-            console.log("writing data");
+            console.log("updating data");
             print(user, "user");
-            const docRef = await addDoc(collection(fireStoreDb, "sample"), {
-                name: user.email,
-                name2: "newUser2",
-                game: ["", "", "", "", "", "", "", "", ""]
-            }).then((docRef) => {
-                setDocId(docRef); 
-                const unsubscribe = onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                      console.log("Current data: ", docSnap.data());
-                      setBoard(docSnap.data().game);
-                      setIsXNext(!isXNext);
-                    } else {
-                      console.log("No such document!");
-                    }
-                  }, (error) => {
-                    console.error("Error getting document: ", error);
-                  });
-                
+            const docRef = doc(fireStoreDb, "sample", docId.id);
+            await updateDoc(docRef, {
+                name2 : user.email, // the field you want to update
+                // other fields to update...
+              }).then((docRef) => {
                 console.log("Document written with ID: ", docRef.id);
-            })
-                .catch((error) => {
+            }).catch((error) => {
                     console.error("Error adding document: ", error);
                 });
-
         };
-
-        
+        const docRef = doc(fireStoreDb, "sample", docId.id);
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+            setBoard(docSnap.data().game);
+            setIsXNext(!isXNext);
+              console.log("Current data: ", docSnap.data());
+            } else {
+              console.log("No such document!");
+            }
+          }, (error) => {
+            console.error("Error getting document: ", error);
+          });
 
         fetchData();
-        // return () => {
-        //     unsubscribe();
-        // };
     }, []);
 
     const writeData = async () => {
@@ -69,8 +62,6 @@ const TikTakToe = () => {
             });
     };
 
-
-
     const handlePress = (index) => {
         if (board[index] !== '' || winner) {
             // If the square is already filled or the game is over, ignore the press
@@ -80,7 +71,8 @@ const TikTakToe = () => {
         const newBoard = [...board];
         newBoard[index] = isXNext ? 'X' : 'O';
         setBoard(newBoard);
-        writeData();
+        writeData()
+
         const winner = checkWinner(newBoard);
         if (winner) {
             setWinner(winner);
@@ -130,7 +122,7 @@ const TikTakToe = () => {
     );
 };
 
-export default TikTakToe;
+export default TikTakToeJoin;
 
 
 export const Board = ({ board, onPress }) => {
