@@ -11,24 +11,6 @@ const Board = () => {
 
     useEffect(() => {
         const coll = collection(fireStoreDb, "sample");
-        print(coll, "COLLECTION");
-
-        // const fetchData = async () => {
-        //     try {
-        //         const querySnapshot = await getDocs(coll);
-        //         const dataList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        //         setData(dataList);
-        //         setLoading(false);
-        //     } catch (err) {
-        //         setError('Failed to fetch data', err);
-        //         setLoading(false);
-        //     }
-        // };
-
-        // fetchData();
-
-
-
         const q = query(coll);
         const unsubscribe = onSnapshot(q,(querySnapshot) => {
             // querySnapshot.forEach(documentSnapshot => {
