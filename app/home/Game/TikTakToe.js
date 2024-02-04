@@ -57,8 +57,9 @@ const TikTakToe = () => {
                         }
                         //   setIsXNext(!isXNext);
                     }
-                    else {
+                    else if (!docSnap.exists()) {
                         console.log("No such document!");
+                        router.replace('home/HomeScreen');
                     }
                     // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board) ){
                     //     setFetch(!fetch);

@@ -1,7 +1,7 @@
 import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
-import { collection, addDoc, doc, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDoc,addDoc, doc, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
 import { useLocalSearchParams, useGlobalSearchParams, Link } from 'expo-router';
@@ -239,7 +239,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         height: "100%",
-        textAlign: "center"
+        width:"100%",
+        textAlign: "center",
+        paddingVertical:"20%",
+        backgroundColor:"#192a32"
     },
     statusBar: {
         backgroundColor: "blue",
