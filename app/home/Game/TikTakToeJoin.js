@@ -13,53 +13,56 @@ const TikTakToeJoin = () => {
     const [winner, setWinner] = useState('');
     const [error, setError] = useState(null);
     const docId = useLocalSearchParams();
+    const [fetch, setFetch] = useState(true);
 
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
         print(user, "user");
         const fetchData = async () => {
-            console.log("updating data");
-            print(user, "user");
             const docRef = doc(fireStoreDb, "sample", docId.id);
             await updateDoc(docRef, {
-                name2 : user.email, // the field you want to update
+                name2: user.email, // the field you want to update
                 // other fields to update...
-              }).then((docRef) => {
+            }).then((docRef) => {
                 console.log("Document written with ID: ", docRef.id);
             }).catch((error) => {
-                    console.error("Error adding document: ", error);
-                });
+                console.error("Error adding document: ", error);
+            });
         };
         const docRef = doc(fireStoreDb, "sample", docId.id);
         const unsubscribe = onSnapshot(docRef, (docSnap) => {
-            if (docSnap.exists()) {
-            setBoard(docSnap.data().game);
-            setIsXNext(!isXNext);
-              console.log("Current data: ", docSnap.data());
+            console.log("listener 0")
+            if (docSnap.exists() && fetchData) {
+                console.log(docSnap.data().game," game")
+                setBoard(docSnap.data().game);
+                // setIsXNext(!isXNext);
             } else {
-              console.log("No such document!");
+                console.log("No such document!");
             }
-          }, (error) => {
+            if (docSnap.exists()) {
+                setFetch(!fetch);
+            }
+        }, (error) => {
             console.error("Error getting document: ", error);
-          });
+        });
 
         fetchData();
     }, []);
 
-    const writeData = async () => {
-        console.log("updating data");
+    const writeData = async (nextBoard) => {
         // print(user, "user");
+        console.log("write 1")
         const docRef = doc(fireStoreDb, "sample", docId.id);
         await updateDoc(docRef, {
-            game : board, // the field you want to update
+            game: nextBoard, // the field you want to update
             // other fields to update...
-          }).then((docRef) => {
+        }).then((docRef) => {
             console.log("Document written with ID: ", docRef.id);
             setIsXNext(!isXNext);
         }).catch((error) => {
-                console.error("Error adding document: ", error);
-            });
+            console.error("Error adding document: ", error);
+        });
     };
 
     const handlePress = (index) => {
@@ -69,10 +72,10 @@ const TikTakToeJoin = () => {
         }
 
         const newBoard = [...board];
-        newBoard[index] = isXNext ? 'X' : 'O';
-        setBoard(newBoard);
-        writeData()
-
+        newBoard[index] = isXNext ? 'O' : 'X';
+        setBoard((prev) => newBoard);
+        writeData(newBoard)
+        setFetch((prev) => !prev);
         const winner = checkWinner(newBoard);
         if (winner) {
             setWinner(winner);
