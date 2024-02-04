@@ -14,35 +14,47 @@ const TikTakToeJoin = () => {
     const [error, setError] = useState(null);
     const docId = useLocalSearchParams();
     const [fetch, setFetch] = useState(true);
+    const [count, setCount] = useState(1);
+
+    const compareTwoArrays = (arr1, arr2) => {
+        
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
 
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
-        print(user, "user");
         const fetchData = async () => {
             const docRef = doc(fireStoreDb, "sample", docId.id);
             await updateDoc(docRef, {
                 name2: user.email, // the field you want to update
                 // other fields to update...
-            }).then((docRef) => {
-                console.log("Document written with ID: ", docRef.id);
+            }).then(() => {
+                console.log("Document written with ID: ");
             }).catch((error) => {
                 console.error("Error adding document: ", error);
             });
         };
         const docRef = doc(fireStoreDb, "sample", docId.id);
         const unsubscribe = onSnapshot(docRef, (docSnap) => {
-            console.log("listener 0")
-            if (docSnap.exists() && fetchData) {
+            console.log("listener 0",fetch,docId.id);
+            
+            if (docSnap.exists() && count % 2 == 1) {
                 console.log(docSnap.data().game," game")
-                setBoard(docSnap.data().game);
+                setBoard((prev)=>docSnap.data().game);
+                setCount(docSnap.data().count);
                 // setIsXNext(!isXNext);
             } else {
                 console.log("No such document!");
             }
-            if (docSnap.exists()) {
-                setFetch(!fetch);
-            }
+            // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board)) {
+            //     setFetch(!fetch);
+            // }
         }, (error) => {
             console.error("Error getting document: ", error);
         });
@@ -52,21 +64,23 @@ const TikTakToeJoin = () => {
 
     const writeData = async (nextBoard) => {
         // print(user, "user");
-        console.log("write 1")
+        console.log("write 1",fetch,docId.id);
         const docRef = doc(fireStoreDb, "sample", docId.id);
         await updateDoc(docRef, {
             game: nextBoard, // the field you want to update
+            count: count + 1
             // other fields to update...
-        }).then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-            setIsXNext(!isXNext);
+        }).then(() => {
+            console.log("Document written with ID: ");
+            // setIsXNext(!isXNext);
         }).catch((error) => {
             console.error("Error adding document: ", error);
         });
     };
 
     const handlePress = (index) => {
-        if (board[index] !== '' || winner) {
+        print("PRESS 1",fetch)
+        if (board[index] !== '' || winner || count % 2 == 0) {
             // If the square is already filled or the game is over, ignore the press
             return;
         }
@@ -75,7 +89,8 @@ const TikTakToeJoin = () => {
         newBoard[index] = isXNext ? 'O' : 'X';
         setBoard((prev) => newBoard);
         writeData(newBoard)
-        setFetch((prev) => !prev);
+        // setFetch((prev) => !prev);
+        setCount((prev) => prev + 1);
         const winner = checkWinner(newBoard);
         if (winner) {
             setWinner(winner);
@@ -113,7 +128,7 @@ const TikTakToeJoin = () => {
                     <Text style={{ ...styles.xo, color: "#37c5c1" }}>X</Text>
                     <Text style={{ ...styles.xo, color: "#f5b63c" }}>O</Text>
                 </View>
-                <Text style={styles.status}>{winner ? `Winner: ${winner}` : `${isXNext ? 'X' : 'O'} TURN`}</Text>
+                <Text style={styles.status}>{winner ? `Winner: ${winner}` : `${isXNext ? 'O' : 'X'} TURN`}</Text>
                 <View style={{ flexDirection: "row" }}>
                     <Text style={{ ...styles.xo, color: "#37c5c1" }}>X</Text>
                     <Text style={{ ...styles.xo, color: "#f5b63c" }}>O</Text>

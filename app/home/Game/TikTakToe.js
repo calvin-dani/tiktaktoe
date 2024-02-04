@@ -13,7 +13,8 @@ const TikTakToe = () => {
     const [winner, setWinner] = useState('');
     const [error, setError] = useState(null);
     const [docId, setDocId] = useState(null);
-    const [fetch, setFetch] = useState(false);
+    // const [fetch, setFetch] = useState(false);
+    const [count, setCount] = useState(0);
 
     const compareTwoArrays = (arr1, arr2) => {
         
@@ -33,20 +34,22 @@ const TikTakToe = () => {
             const docRef = await addDoc(collection(fireStoreDb, "sample"), {
                 name: user.email,
                 name2: "newUser2",
-                game: ["", "", "", "", "", "", "", "", ""]
+                game: ["", "", "", "", "", "", "", "", ""],
+                count : 0
             }).then((docRef) => {
                 setDocId(docRef); 
                 const unsubscribe = onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists() && fetchData) {
+                    if (docSnap.exists() && docSnap.data().count % 2  == 0) {
                       setBoard(docSnap.data().game);
+                      setCount(docSnap.data().count);
                     //   setIsXNext(!isXNext);
                     }
                     else {
                       console.log("No such document!");
                     }
-                    if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board) ){
-                        setFetch(!fetch);
-                    }
+                    // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board) ){
+                    //     setFetch(!fetch);
+                    // }
                   }, (error) => {
                     console.error("Error getting document: ", error);
                   });
@@ -71,7 +74,8 @@ const TikTakToe = () => {
         // print(user, "user");
         const docRef = doc(fireStoreDb, "sample", docId.id);
         await updateDoc(docRef, {
-            game : newBoard // the field you want to update
+            game : newBoard ,
+            count : count + 1 // the field you want to update
             // other fields to update...
           }).then(() => {
             console.log("Document written with ID for update ");
@@ -84,7 +88,7 @@ const TikTakToe = () => {
 
 
     const handlePress = (index) => {
-        if (board[index] !== '' || winner || fetch) {
+        if (board[index] !== '' || winner || count % 2 != 0) {
             // If the square is already filled or the game is over, ignore the press
             return;
         }
@@ -92,8 +96,10 @@ const TikTakToe = () => {
         const newBoard = [...board];
         newBoard[index] = isXNext ? 'X' : 'O';
         setBoard((prev) => newBoard);
+        setCount((prev) => prev + 1);
         writeData(newBoard);
-        setFetch((prev) => !prev);
+
+        // setFetch((prev) => !prev);
         const winner = checkWinner(newBoard);
         if (winner) {
             setWinner(winner);
