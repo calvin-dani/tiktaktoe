@@ -1,7 +1,7 @@
 import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
-import { collection, addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, addDoc, doc, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
 import { useLocalSearchParams, useGlobalSearchParams, Link } from 'expo-router';
@@ -33,38 +33,97 @@ const TikTakToeJoin = () => {
             const docRef = doc(fireStoreDb, "sample", docId.id);
             await updateDoc(docRef, {
                 name2: user.email, // the field you want to update
-                // other fields to update...
+                players: 2
             }).then(() => {
+                const docRef = doc(fireStoreDb, "sample", docId.id);
+
+                const unsubscribe = onSnapshot(docRef, (docSnap) => {
+                    console.log("listener 0", fetch, docId.id);
+                    if (docSnap.exists()) {
+                        if (docSnap.data().players == 1) {
+                            const docRef = doc(fireStoreDb, "sample", docId.id);
+                            const deleteGame = async (docRef) => {
+                                await deleteDoc(docRef).then(() => {
+                                    console.log("Document successfully deleted!");
+                                    router.replace('home/Lobby/Board')
+                                }).catch((error) => {
+                                    console.error("Error removing document: ", error);
+                                });
+                            }
+                            deleteGame(docRef);
+                        }
+                    }
+                    if (docSnap.exists() && count % 2 == 1) {
+                        console.log(docSnap.data().game, " game")
+                        setBoard((prev) => docSnap.data().game);
+                        setCount(docSnap.data().count);
+                        const winner = checkWinner(docSnap.data().game, docSnap.data().count);
+                        if (winner) {
+                            setWinner(winner);
+                        }
+                        // setIsXNext(!isXNext);
+                    } else {
+                        console.log("No such document!");
+                    }
+                    // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board)) {
+                    //     setFetch(!fetch);
+                    // }
+                }, (error) => {
+                    console.error("Error getting document: ", error);
+                });
                 console.log("Document written with ID: ");
             }).catch((error) => {
                 console.error("Error adding document: ", error);
             });
         };
-        const docRef = doc(fireStoreDb, "sample", docId.id);
-        const unsubscribe = onSnapshot(docRef, (docSnap) => {
-            console.log("listener 0", fetch, docId.id);
 
-            if (docSnap.exists() && count % 2 == 1) {
-                console.log(docSnap.data().game, " game")
-                setBoard((prev) => docSnap.data().game);
-                setCount(docSnap.data().count);
-                const winner = checkWinner(docSnap.data().game, docSnap.data().count);
-                if (winner) {
-                    setWinner(winner);
-                }
-                // setIsXNext(!isXNext);
-            } else {
-                console.log("No such document!");
-            }
-            // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board)) {
-            //     setFetch(!fetch);
-            // }
-        }, (error) => {
-            console.error("Error getting document: ", error);
-        });
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        return () => {
+            console.log("unmounting", docId);
+            console.log("unmounting", winner);
+            console.log("unmounting", count);
+            console.log("unmounting", board);
+            // unsubscribe();
+            const updateExitData = async () => {
+                if (docId == null) {
+                    return;
+                }
+                print(docId, "docId")
+                const docRef = doc(fireStoreDb, "sample", docId.id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().players == 2) {
+                    console.log("Document exists to update!");
+                    await updateDoc(docRef, {
+                        players: 1
+                    }).then(() => {
+                        console.log("Document update with player to 1 ");
+                    }).catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
+                }
+                else if (docSnap.exists() && docSnap.data().players == 1) {
+                    console.log("Document exists to delete!");
+                    await deleteDoc(docRef).then(() => {
+                        console.log("Document successfully deleted!");
+                    }).catch((error) => {
+                        console.error("Error removing document: ", error);
+                    });
+                }
+
+            };
+
+            // setDocId((prev)=>{
+            //     print(prev, "prev")
+            //     updateExitData(prev)
+            //     return null
+            // })
+            updateExitData();
+        };
+    }, [docId]);
 
     const writeData = async (nextBoard) => {
         // print(user, "user");

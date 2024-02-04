@@ -4,7 +4,7 @@ import { View, Text, Button, ActivityIndicator, FlatList, StyleSheet, TouchableO
 import { fireStoreDb } from "../../../firebaseConfig";
 import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import TikTakToeJoin from "../Game/TikTakToeJoin";
-import { router } from 'expo-router';
+import { router , Link } from 'expo-router';
 
 const Board = () => {
     const [data, setData] = useState([]);
@@ -55,6 +55,9 @@ const Board = () => {
                     </View>
                 )}
             />
+            <View style={styles.backButton}>
+                <Link style={{color:"white",fontSize:20,fontWeight:900}} replace href ='home/HomeScreen'>Go to Home</Link>
+            </View>
         </View>
     );
 }

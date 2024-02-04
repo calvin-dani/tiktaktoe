@@ -1,10 +1,10 @@
 import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 // import { useNavigation } from "@react-navigation/native";
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, addDoc, doc , getDoc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
-import { onSnapshot, updateDoc } from "firebase/firestore";
+import { onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
 import { router,Link } from "expo-router";
 
 
@@ -28,10 +28,26 @@ const TikTakToe = () => {
                 name: user.email,
                 name2: "newUser2",
                 game: ["", "", "", "", "", "", "", "", ""],
-                count: 0
+                count: 0,
+                players: 1
             }).then((docRef) => {
                 setDocId(docRef);
                 const unsubscribe = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists() && count >= 2) {
+                        if (docSnap.data().players ==  1){
+                            const docRef = doc(fireStoreDb, "sample", docId.id);
+                            const deleteGame = async (docRef) => {
+                                await deleteDoc(docRef).then(()=>{
+                                    console.log("Document successfully deleted!");
+                                    router.replace('home/Lobby/Board')
+                                }).catch((error) => {
+                                    console.error("Error removing document: ", error);
+                                });
+                            }
+                            deleteGame(docRef); 
+                            
+                        }
+                    }
                     if (docSnap.exists() && docSnap.data().count % 2 == 0) {
                         setBoard(docSnap.data().game);
                         setCount(docSnap.data().count);
@@ -62,10 +78,53 @@ const TikTakToe = () => {
 
 
         fetchData();
-        // return () => {
-        //     unsubscribe();
-        // };
+        
     }, []);
+
+
+    useEffect(() => {
+        return () => {
+            console.log("unmounting",docId);
+            console.log("unmounting",winner);
+            console.log("unmounting",count);
+            console.log("unmounting",board);
+            // unsubscribe();
+            const updateExitData = async () => {
+                if (docId == null) {
+                    return;
+                }
+                print(docId, "docId")
+                const docRef = doc(fireStoreDb, "sample", docId.id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().players == 2) {
+                    console.log("Document exists to update!");
+                    await updateDoc(docRef, {
+                        players: 1
+                    }).then(() => {
+                        console.log("Document updated: ");
+                    }).catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
+                  }
+                  else if (docSnap.exists() && docSnap.data().players == 1) {
+                    console.log("Document exists!");
+                    await deleteDoc(docRef).then(()=>{
+                        console.log("Document successfully deleted!");
+                    }).catch((error) => {
+                        console.error("Error removing document: ", error);
+                    });
+                  } 
+                
+            };
+
+            // setDocId((prev)=>{
+            //     print(prev, "prev")
+            //     updateExitData(prev)
+            //     return null
+            // })
+            updateExitData();
+        };
+    }, [docId]);
 
     const writeData = async (newBoard) => {
         // print(user, "user");
@@ -75,6 +134,7 @@ const TikTakToe = () => {
             count: count + 1 // the field you want to update
             // other fields to update...
         }).then(() => {
+            console.log(docId, "docId")
             console.log("Document written with ID for update ");
             // setIsXNext(!isXNext);
         }).catch((error) => {
