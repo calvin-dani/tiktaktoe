@@ -190,7 +190,12 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 1.05,
         elevation: 8
-    }
+    },
+    xo:{
+        fontSize:35,
+        padding:3,
+        fontWeight:"900"
+       }
 })
 
 export default SignUpScreen;
