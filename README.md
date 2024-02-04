@@ -14,7 +14,7 @@ This project presents a classic Tik-Tak-Toe game, reimagined for the mobile era.
 
 ## Technical Stack
 
-- **Frontend:** React Native with TypeScript for type-safe code.
+- **Frontend:** React Native using Expo .
 - **Backend:** Firebase for authentication, database, and hosting.
 - **Form Handling:** react-hook-form for enhanced form handling.
 - **Navigation:** expo-router for intuitive screen navigation.
