@@ -9,14 +9,13 @@ import { getAuth, onAuthStateChanged ,signInWithEmailAndPassword} from "firebase
 const LoginScreen = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [error, setError] = useState(null);
+
+
     useEffect(() => {
-        // const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-        //   setIsAuthenticated(!!user);
-        // });
+      
         if (isAuthenticated) {
             router.push('home/HomeScreen');
         }
-        // return () => unsubscribe();
     }, [isAuthenticated]);
 
 
@@ -50,16 +49,6 @@ const LoginScreen = () => {
         username: z.string().email('Please enter a valid email address'),
         password: z.string().min(6, 'Password must be at least 6 characters'),
     });
-
-
-    // const {
-    //     control,
-    //     handleSubmit,
-    //     formState: { errors },
-    // } = useForm({
-    //     resolver: zodResolver(signUpSchema),
-    // });
-
     
     const { control, handleSubmit } = useForm();
 
@@ -111,9 +100,7 @@ const LoginScreen = () => {
             )}
         />
         {error && <Text>{error}</Text>}
-        {/* {errors.password && <Text>{errors.password.message}</Text>} */}
-
-        {/* <LoginScreen /> */}
+        
        
         <View style={{...styles.menuItems,backgroundColor:"#5b604e"}}>
             <Text style={{color:"white",fontSize:15,fontWeight:900}} onPress={handleSubmit(loginUser)}>Log In</Text>
