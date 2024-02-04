@@ -14,14 +14,14 @@ const Board = () => {
     useEffect(() => {
         const coll = collection(fireStoreDb, "sample");
         const q = query(coll);
-        const unsubscribe = onSnapshot(q,(querySnapshot) => {
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             // querySnapshot.forEach(documentSnapshot => {
             //     console.log(documentSnapshot.id, " => ", documentSnapshot.data());
             // });
             const dataList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log(dataList, "dataList");    
+            console.log(dataList, "dataList");
             setData(dataList);
-                setLoading(false);
+            setLoading(false);
         }, error => {
             console.error("Error getting documents: ", error);
         });
@@ -46,12 +46,11 @@ const Board = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.tableItem}>
-                        {/* Render each item as a row in your table */}
-                        {/* <Text>{item.id}</Text> */}
-                        
-                        <Text style={{ ...styles.items, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }}>{item.name}</Text>
-                        <TouchableOpacity onPress={()=> router.replace({ pathname: 'home/Game/TikTakToeJoin', params: { id: item.id } })}>
-                        <Text style={{ ...styles.items, borderBottomRightRadius: 10, borderTopRightRadius: 10, borderLeftColor: "white", borderLeftWidth: 2 } }>Join</Text>
+                        <TouchableOpacity >
+                            <Text style={{ ...styles.items, borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }}>{item.name}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => router.replace({ pathname: 'home/Game/TikTakToeJoin', params: { id: item.id } })}>
+                            <Text style={{ ...styles.items, borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>Join</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -61,21 +60,26 @@ const Board = () => {
 }
 const styles = StyleSheet.create({
     mainContainer: {
+        height: "100%",
+        width: "100%",
+        alignItems: "center",
         justifyContent: "center",
-        alignItems: "center"
+        paddingVertical: "20%",
+        backgroundColor: "#192a32"
     },
+
     tableItem: {
         flexDirection:
             "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        padding: "3%"
     },
     items: {
-        padding: 25,
         backgroundColor: "#1f3640",
         color: "white",
-        fontSize: 15,
+        fontSize: 30,
         fontWeight: "400",
-        width: "40%"
+        width: "80%",
     }
 })
 export default Board;
