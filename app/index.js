@@ -4,7 +4,6 @@ import LoginScreen from "./LoginScreen";
 const HomePage = () => {
   return (
     <View>
-        <Text>Home Page</Text>
         <LoginScreen/>
     </View>
   )

@@ -1,6 +1,6 @@
-import { Button, Text, View, TextInput } from "react-native";
+import { Button, Text, View, TextInput, StyleSheet } from "react-native";
 import React, { useEffect, useState } from 'react';
-import { router } from 'expo-router';
+import { router , Link } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { z, ZodError } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -72,12 +72,19 @@ const LoginScreen = () => {
 
 
     // Show login screen or similar
-    return <View>
+    return <View style={styles.mainContainer}>
+        <View style={{...styles.heading,flexDirection:"row"}}>
+                <Text style={{...styles.xo,color:"#37c5c1"}}>X</Text>
+                <Text style={{...styles.xo,color:"#f5b63c"}}>O</Text>
+                <Text style={{...styles.xo,color:"#37c5c1"}}>X</Text>
+                <Text style={{...styles.xo,color:"#f5b63c"}}>O</Text>
+                </View>
         <Controller
             control={control}
             name="username"
             render={({ field: { onChange, onBlur,value } }) => (
                 <TextInput
+                style={styles.inputText}
                     value={value}
                     onBlur={onBlur}
             onChangeText={onChange}
@@ -93,6 +100,7 @@ const LoginScreen = () => {
             name="password"
             render={({ field: { onChange, onBlur,value } }) => (
                 <TextInput
+                style={styles.inputText}
                     value={value}
                     onBlur={onBlur}
             onChangeText={onChange}
@@ -106,17 +114,94 @@ const LoginScreen = () => {
         {/* {errors.password && <Text>{errors.password.message}</Text>} */}
 
         {/* <LoginScreen /> */}
-        <Button
-            title="Authenticate"
-            onPress={handleSubmit(loginUser)}
-        />
-        <Button
-            title="Sign up"
-            onPress={() => router.push('SignupScreen')}
-        />
+       
+        <View style={{...styles.menuItems,backgroundColor:"#5b604e"}}>
+            <Text style={{color:"white",fontSize:15,fontWeight:900}} onPress={handleSubmit(loginUser)}>Log In</Text>
+                </View>
+        
+        <View style={styles.menuItems}>
+            <Text style={{color:"white",fontSize:15,fontWeight:900}} onPress={() => router.push('SignupScreen')}>Sign Up </Text>
+                </View>
     </View>;
 
 
 };
+
+const styles = StyleSheet.create({
+    mainContainer:{
+     height:"100%",
+     width:"100%",
+     alignItems:"center",
+     justifyContent:"center",
+     paddingVertical:"20%",
+     backgroundColor:"#192a32"
+    },
+    heading:{
+    width:"100%",
+    alignItems:"center",
+    justifyContent:"center",
+    padding:20,
+    borderRadius:10,
+    marginVertical:"10%",
+    color:"white",
+    fontWeight:"900",
+    fontSize:20
+    },
+    menu:{
+        height:"100%",
+       width:"90%"
+    },
+    inputText:{
+        backgroundColor:"#627279",
+    width:"80%",
+    alignItems:"center",
+    textAlign:"center",
+    marginVertical:10,
+    padding:20,
+    borderRadius:10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 10,
+      height: 12,
+    },
+    shadowOpacity:  1,
+    shadowRadius: 1.05,
+    elevation: 8
+    },
+    menuItems:{
+        backgroundColor:"#60534e",
+    width:"80%",
+    alignItems:"center",
+    textAlign:"center",
+    marginVertical:10,
+    padding:20,
+    borderRadius:10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 10,
+      height: 12,
+    },
+    shadowOpacity:  1,
+    shadowRadius: 1.05,
+    elevation: 8
+    },
+    logOut:{
+        backgroundColor:"#910e04",
+    width:"100%",
+    alignItems:"center",
+    textAlign:"center",
+    marginVertical:10,
+    padding:20,
+    borderRadius:10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 10,
+      height: 12,
+    },
+    shadowOpacity:  1,
+    shadowRadius: 1.05,
+    elevation: 8
+    }
+})
 
 export default LoginScreen;

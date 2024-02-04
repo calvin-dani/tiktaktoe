@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z, ZodError } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import { getAuth, onAuthStateChanged ,createUserWithEmailAndPassword} from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 
 // Define your validation schema using zod
 
@@ -63,12 +63,19 @@ const SignUpScreen = () => {
     };
 
     return (
-        <View>
+        <View style={styles.mainContainer}>
+            <View style={{ ...styles.heading, flexDirection: "row" }}>
+                <Text style={{ ...styles.xo, color: "#37c5c1" }}>X</Text>
+                <Text style={{ ...styles.xo, color: "#f5b63c" }}>O</Text>
+                <Text style={{ ...styles.xo, color: "#37c5c1" }}>X</Text>
+                <Text style={{ ...styles.xo, color: "#f5b63c" }}>O</Text>
+            </View>
             <Controller
                 control={control}
                 name="username"
                 render={({ field: { onBlur, onChange, value } }) => (
                     <TextInput
+                    style={styles.inputText}
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
@@ -84,6 +91,7 @@ const SignUpScreen = () => {
                 name="password"
                 render={({ field: { onBlur, onChange, value } }) => (
                     <TextInput
+                    style={styles.inputText}
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
@@ -95,14 +103,94 @@ const SignUpScreen = () => {
             />
             {error && <Text>{error}</Text>}
 
-            <Button title="Sign Up" onPress={handleSubmit(createAccount)} />
 
-            <Button
-                title="Login"
-                onPress={() => router.push('LoginScreen')}
-            />
+            <View style={{ ...styles.menuItems, backgroundColor: "#5b604e" }}>
+                <Text style={{ color: "white", fontSize: 15, fontWeight: 900 }} onPress={handleSubmit(createAccount)}>Create Account</Text>
+            </View>
+
+            <View style={styles.menuItems}>
+                <Text style={{ color: "white", fontSize: 15, fontWeight: 900 }} onPress={() => router.replace('LoginScreen')}>Go To Log In </Text>
+            </View>
         </View>
     );
 };
+
+
+const styles = StyleSheet.create({
+    mainContainer: {
+        height: "100%",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: "20%",
+        backgroundColor: "#192a32"
+    },
+    heading: {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+        borderRadius: 10,
+        marginVertical: "10%",
+        color: "white",
+        fontWeight: "900",
+        fontSize: 20
+    },
+    menu: {
+        height: "100%",
+        width: "90%"
+    },
+    inputText: {
+        backgroundColor: "#627279",
+        width: "80%",
+        alignItems: "center",
+        textAlign: "center",
+        marginVertical: 10,
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: "black",
+        shadowOffset: {
+            width: 10,
+            height: 12,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 1.05,
+        elevation: 8
+    },
+    menuItems: {
+        backgroundColor: "#60534e",
+        width: "80%",
+        alignItems: "center",
+        textAlign: "center",
+        marginVertical: 10,
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: "black",
+        shadowOffset: {
+            width: 10,
+            height: 12,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 1.05,
+        elevation: 8
+    },
+    logOut: {
+        backgroundColor: "#910e04",
+        width: "100%",
+        alignItems: "center",
+        textAlign: "center",
+        marginVertical: 10,
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: "black",
+        shadowOffset: {
+            width: 10,
+            height: 12,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 1.05,
+        elevation: 8
+    }
+})
 
 export default SignUpScreen;

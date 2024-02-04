@@ -48,7 +48,7 @@ const TikTakToeJoin = () => {
                 console.log(docSnap.data().game, " game")
                 setBoard((prev) => docSnap.data().game);
                 setCount(docSnap.data().count);
-                const winner = checkWinner(docSnap.data().game,docSnap.data().count);
+                const winner = checkWinner(docSnap.data().game, docSnap.data().count);
                 if (winner) {
                     setWinner(winner);
                 }
@@ -95,14 +95,14 @@ const TikTakToeJoin = () => {
         writeData(newBoard)
         // setFetch((prev) => !prev);
         setCount((prev) => prev + 1);
-        const winner = checkWinner(newBoard,count+1);
+        const winner = checkWinner(newBoard, count + 1);
         if (winner) {
             setWinner(winner);
         }
     };
 
 
-    const checkWinner = (board,count) => {
+    const checkWinner = (board, count) => {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -143,8 +143,8 @@ const TikTakToeJoin = () => {
                 </View>
             </View>
             <Board board={board} onPress={handlePress} />
-            <View>
-                <Button title="Go to Home" onPress={() => router.replace('home/HomeScreen')} />
+            <View style={styles.backButton}>
+                <Link style={{ color: "white", fontSize: 20, fontWeight: 900 }} replace href='home/HomeScreen'>Go to Home</Link>
             </View>
             {/* Other UI elements */}
         </View>
@@ -192,6 +192,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 10,
         padding: 20
+    },
+    backButton: {
+        backgroundColor: "#627279",
+        width: "100%",
+        alignItems: "center",
+        textAlign: "center",
+        marginVertical: 10,
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: "black",
+        shadowOffset: {
+            width: 10,
+            height: 12,
+        }
     },
     xo: {
         fontSize: 35,

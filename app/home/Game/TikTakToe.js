@@ -5,7 +5,7 @@ import { collection, addDoc, doc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
 import { onSnapshot, updateDoc } from "firebase/firestore";
-import { router } from "expo-router";
+import { router,Link } from "expo-router";
 
 
 const TikTakToe = () => {
@@ -145,8 +145,8 @@ const TikTakToe = () => {
                 </View>
             </View>
             <Board board={board} onPress={handlePress} />
-            <View>
-                <Button title="Go to Home" onPress={() => router.replace('home/HomeScreen')} />
+            <View style={styles.backButton}>
+                <Link style={{color:"white",fontSize:20,fontWeight:900}} replace href ='home/HomeScreen'>Go to Home</Link>
             </View>
             {/* Other UI elements */}
         </View>
@@ -182,7 +182,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         height: "100%",
-        textAlign: "center"
+        width:"100%",
+        textAlign: "center",
+        paddingVertical:"20%",
+        backgroundColor:"#192a32"
     },
     statusBar: {
         backgroundColor: "blue",
@@ -199,6 +202,23 @@ const styles = StyleSheet.create({
         fontSize: 35,
         padding: 1,
         fontWeight: "900"
+    },
+    backButton:{
+        backgroundColor:"#627279",
+    width:"100%",
+    alignItems:"center",
+    textAlign:"center",
+    marginVertical:10,
+    padding:20,
+    borderRadius:10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 10,
+      height: 12,
+    },
+    shadowOpacity:  1,
+    shadowRadius: 1.05,
+    elevation: 8
     },
     status: {
         fontSize: 25,
