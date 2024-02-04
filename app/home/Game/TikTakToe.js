@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { collection, addDoc, doc } from "firebase/firestore";
 import { fireStoreDb } from "../../../firebaseConfig";
 import { getAuth } from "firebase/auth";
-import {onSnapshot, updateDoc} from "firebase/firestore";
+import { onSnapshot, updateDoc } from "firebase/firestore";
+import { router } from "expo-router";
 
 
 const TikTakToe = () => {
@@ -16,15 +17,7 @@ const TikTakToe = () => {
     // const [fetch, setFetch] = useState(false);
     const [count, setCount] = useState(0);
 
-    const compareTwoArrays = (arr1, arr2) => {
-        
-        for (let i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
+
 
     useEffect(() => {
         const auth = getAuth();
@@ -35,25 +28,29 @@ const TikTakToe = () => {
                 name: user.email,
                 name2: "newUser2",
                 game: ["", "", "", "", "", "", "", "", ""],
-                count : 0
+                count: 0
             }).then((docRef) => {
-                setDocId(docRef); 
+                setDocId(docRef);
                 const unsubscribe = onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists() && docSnap.data().count % 2  == 0) {
-                      setBoard(docSnap.data().game);
-                      setCount(docSnap.data().count);
-                    //   setIsXNext(!isXNext);
+                    if (docSnap.exists() && docSnap.data().count % 2 == 0) {
+                        setBoard(docSnap.data().game);
+                        setCount(docSnap.data().count);
+                        const winner = checkWinner(docSnap.data().game,docSnap.data().count);
+                        if (winner) {
+                            setWinner(winner);
+                        }
+                        //   setIsXNext(!isXNext);
                     }
                     else {
-                      console.log("No such document!");
+                        console.log("No such document!");
                     }
                     // if (docSnap.exists() && !compareTwoArrays(docSnap.data(),board) ){
                     //     setFetch(!fetch);
                     // }
-                  }, (error) => {
+                }, (error) => {
                     console.error("Error getting document: ", error);
-                  });
-                
+                });
+
                 console.log("Document new written with ID: ", docRef.id);
             })
                 .catch((error) => {
@@ -62,7 +59,7 @@ const TikTakToe = () => {
 
         };
 
-        
+
 
         fetchData();
         // return () => {
@@ -74,15 +71,15 @@ const TikTakToe = () => {
         // print(user, "user");
         const docRef = doc(fireStoreDb, "sample", docId.id);
         await updateDoc(docRef, {
-            game : newBoard ,
-            count : count + 1 // the field you want to update
+            game: newBoard,
+            count: count + 1 // the field you want to update
             // other fields to update...
-          }).then(() => {
+        }).then(() => {
             console.log("Document written with ID for update ");
             // setIsXNext(!isXNext);
         }).catch((error) => {
-                console.error("Error adding document: ", error);
-            });
+            console.error("Error adding document: ", error);
+        });
     };
 
 
@@ -92,7 +89,7 @@ const TikTakToe = () => {
             // If the square is already filled or the game is over, ignore the press
             return;
         }
-      
+
         const newBoard = [...board];
         newBoard[index] = isXNext ? 'X' : 'O';
         setBoard((prev) => newBoard);
@@ -100,14 +97,14 @@ const TikTakToe = () => {
         writeData(newBoard);
 
         // setFetch((prev) => !prev);
-        const winner = checkWinner(newBoard);
+        const winner = checkWinner(newBoard,count+1);
         if (winner) {
             setWinner(winner);
         }
     };
 
 
-    const checkWinner = (board) => {
+    const checkWinner = (board,count) => {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -124,6 +121,10 @@ const TikTakToe = () => {
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
                 return board[a];
             }
+        }
+
+        if (count == 9) {
+            return "DRAW";
         }
 
         return '';
@@ -144,6 +145,9 @@ const TikTakToe = () => {
                 </View>
             </View>
             <Board board={board} onPress={handlePress} />
+            <View>
+                <Button title="Go to Home" onPress={() => router.replace('home/HomeScreen')} />
+            </View>
             {/* Other UI elements */}
         </View>
     );
