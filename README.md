@@ -23,7 +23,7 @@ This project presents a classic Tik-Tak-Toe game, reimagined for the mobile era.
 ## Getting Started
 
 Follow these steps to set up and run the project:
-
+0. Have android studio or/and XCode setup to run emulators on your device. Else have expo go installed in your phone and scan the qr to run the application.
 1. Clone the repository.
 2. Install dependencies using "npm i".
 3. Set up a Firebase project and configure it with the app in the .env file. 
