@@ -10,14 +10,7 @@ import { getAuth } from "firebase/auth";
 // Initialize Firebase
 
 const firebaseConfig = {
-  apiKey: "AIzaSyASRTfkHkqBmKGxkbVck0ighQGVs7-oIZ0",
-  authDomain: "xyz-tiktaktoe.firebaseapp.com",
-  databaseURL: "https://xyz-tiktaktoe-default-rtdb.firebaseio.com",
-  projectId: "xyz-tiktaktoe",
-  storageBucket: "xyz-tiktaktoe.appspot.com",
-  messagingSenderId: "46669508177",
-  appId: "1:46669508177:web:4c453a1e707312f1e31270",
-  measurementId: "G-1T9WW892YC"
+  // TO BE COMPLETED
 };
 
 const app = initializeApp(firebaseConfig);
